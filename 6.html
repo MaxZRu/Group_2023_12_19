@@ -3,9 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>крестки нолики</title>
+    <style>
+
+
+    </style>
 </head>
 <body>
-    Телицын Даниил
+    <h2>крестики нолики</h2>
+    <div class="board"></div>
 </body>
+<script>
+    board=document.querySelector(".board")
+    /* <div class="cell">данные внутри</div> */
+
+    cell=document.createElement("div")
+    cell.innerHTML="данные внутри"
+    cell.classList.add("cell")
+
+    board.appendChild(cell)
+</script>
 </html>
