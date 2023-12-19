@@ -59,24 +59,24 @@
 
     /*  <div class="cell">данные внутри</div> */
 
-    cell = document.createElement("div")
-    cell.classList.add("cell")
+    for (let i = 0; i < 9; i++) {
+        let cell = document.createElement("div")
+        cell.classList.add("cell")
 
-    cell.addEventListener("click", function () {
-        cell.innerHTML = Player.innerText
-        if (Player.innerText === "X") {
-            Player.innerText = "0"
-        } else {
-            Player.innerText = "X"
+        cell.addEventListener("click", function () {
+
+            if (cell.innerHTML == "") {
+                cell.innerHTML = Player.innerText
+                if (Player.innerText === "X") {
+                    Player.innerText = "0"
+                } else {
+                    Player.innerText = "X"
+                }
+            }
         }
-
+        )
+        board.appendChild(cell)
     }
-    )
-
-
-
-    board.appendChild(cell)
-
 
 
 
