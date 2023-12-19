@@ -51,7 +51,6 @@
   let bullets = [];
   let enemies = [];
   let countdown = 5; // Обратный отсчет перед началом игры
-
   let gameRunning = false;
 
   // Функция отрисовки игрока
@@ -92,6 +91,13 @@
     ctx.fillText(countdown, canvas.width / 2 - 20, canvas.height / 2);
   }
 
+  // Функция отрисовки "Поехали!"
+  function drawGo() {
+    ctx.font = '48px Arial';
+    ctx.fillStyle = '#FFF';
+    ctx.fillText("Поехали!", canvas.width / 2 - 100, canvas.height / 2);
+  }
+
   // Обработка нажатия клавиш
   document.addEventListener('keydown', (e) => {
     if (gameRunning) {
@@ -125,6 +131,16 @@
       drawCountdown();
       setTimeout(() => {
         countdown--;
+        gameLoop();
+      }, 1000);
+      return;
+    }
+
+    // Отрисовка "Поехали!"
+    if (!gameRunning && countdown === 0) {
+      drawGo();
+      setTimeout(() => {
+        gameRunning = true;
         gameLoop();
       }, 1000);
       return;
@@ -180,7 +196,7 @@
   // Запуск игры
   function startGame() {
     countdown = 5;
-    gameRunning = true;
+    gameRunning = false;
     document.getElementById('menu').style.display = 'none';
     
     // Инициализация начальных врагов
@@ -194,11 +210,11 @@
   }
 
   // Конец игры
-  function endGame() {
-    gameRunning = false;
-    document.getElementById('menu').style.display = 'block';
-    document.getElementById('menu').innerHTML = '<h2>Игра окончена</h2><button onclick="startGame()">Попробовать еще раз</button>';
-  }
+function endGame() {
+  gameRunning = false;
+  document.getElementById('menu').style.display = 'block';
+  document.getElementById('menu').innerHTML = '<h2>Игра окончена</h2><button onclick="startGame()">Попробовать еще раз</button>';
+}
 </script>
 
 </body>
