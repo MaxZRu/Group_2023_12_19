@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>крестки нолики</title>
-    <style>
+    <style> .cell {
+        box-sizing: border-box;
+        width: 100px;
+        height: 100px;
+        border: 3px solid #3db1ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 48px;
+        cursor: pointer;
+      }
 
 
     </style>
@@ -18,7 +28,7 @@
     /* <div class="cell">данные внутри</div> */
 
     cell=document.createElement("div")
-    cell.innerHTML="данные внутри"
+    cell.innerHTML="x"
     cell.classList.add("cell")
 
     board.appendChild(cell)
