@@ -48,15 +48,25 @@
     <div class="board"></div>
 </body>
 <script>
+
+    Player = "X";    
     board = document.querySelector(".board");
 
-
-/*    <div class="cell">данные внутри</div> */
+/*  <div class="cell">данные внутри</div> */
 
     cell = document.createElement("div")
-    cell.innerHTML="X"
     cell.classList.add("cell")
+
+    cell.addEventListener("click", function () {
+        cell.innerHTML=Player
+    }
+    )
+
+
+
     board.appendChild(cell)
+
+
 
 
 
