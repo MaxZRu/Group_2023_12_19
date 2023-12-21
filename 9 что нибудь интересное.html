@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Простой шутер</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+<div id="menu">
+  <h2>Простой шутер</h2>
+  <p>Используйте стрелки для передвижения</p>
+  <p>Используйте пробел для стрельбы</p>
+  <button onclick="startGame()">Начать игру</button>
+</div>
+
+<script>
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Игровой объект - игрок
+  const player = {
+    x: canvas.width / 2,
+    y: canvas.height - 30,
+    width: 30,
+    height: 30,
+    color: '#00F',
+    speed: 5
+  };
+
+  let bullets = [];
+  let enemies = [];
+  let countdown = 5; // Обратный отсчет перед началом игры
+  let gameRunning = false;
+
+  // Функция отрисовки игрока
+  function drawPlayer() {
+    ctx.beginPath();
+    ctx.rect(player.x, player.y, player.width, player.height);
+    ctx.fillStyle = player.color;
+    ctx.fill();
+    ctx.closePath();
+  }
+
+  // Функция отрисовки пуль
+  function drawBullets() {
+    bullets.forEach(bullet => {
+      ctx.beginPath();
+      ctx.rect(bullet.x, bullet.y, 5, 10);
+      ctx.fillStyle = '#F00';
+      ctx.fill();
+      ctx.closePath();
+    });
+  }
+
+  // Функция отрисовки врагов
+  function drawEnemies() {
+    enemies.forEach(enemy => {
+      ctx.beginPath();
+      ctx.rect(enemy.x, enemy.y, 30, 30);
+      ctx.fillStyle = '#0F0';
+      ctx.fill();
+      ctx.closePath();
+    });
+  }
+
+  // Функция отрисовки обратного отсчета
+  function drawCountdown() {
+    ctx.font = '48px Arial';
+    ctx.fillStyle = '#FFF';
+    ctx.fillText(countdown, canvas.width / 2 - 20, canvas.height / 2);
+  }
+
+  // Функция отрисовки "Поехали!"
+  function drawGo() {
+    ctx.font = '48px Arial';
+    ctx.fillStyle = '#FFF';
+    ctx.fillText("Поехали!", canvas.width / 2 - 100, canvas.height / 2);
+  }
+
+  // Обработка нажатия клавиш
+  document.addEventListener('keydown', (e) => {
+    if (gameRunning) {
+      if (e.key === 'ArrowLeft' && player.x > 0) {
+        player.x -= player.speed;
+      } else if (e.key === 'ArrowRight' && player.x < canvas.width - player.width) {
+        player.x += player.speed;
+      } else if (e.key === ' ' || e.key === 'Spacebar') {
+        // Пробел - стрельба
+        bullets.push({ x: player.x + player.width / 2 - 2.5, y: player.y });
+      }
+    }
+  });
+
+  // Основной игровой цикл
+  function gameLoop() {
+    // Очистка холста
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Отрисовка игрока
+    drawPlayer();
+
+    // Отрисовка пуль
+    drawBullets();
+
+    // Отрисовка врагов
+    drawEnemies();
+
+    // Отрисовка обратного отсчета
+    if (!gameRunning && countdown > 0) {
+      drawCountdown();
+      setTimeout(() => {
+        countdown--;
+        gameLoop();
+      }, 1000);
+      return;
+    }
+
+    // Отрисовка "Поехали!"
+    if (!gameRunning && countdown === 0) {
+      drawGo();
+      setTimeout(() => {
+        gameRunning = true;
+        gameLoop();
+      }, 1000);
+      return;
+    }
+
+    // Обновление позиции пуль
+    bullets = bullets.filter(bullet => {
+      bullet.y -= 5;
+      return bullet.y > 0;
+    });
+
+    // Обновление позиции врагов
+    enemies.forEach(enemy => {
+      enemy.y += 2;
+
+      // Проверка столкновения с игроком
+      if (
+        enemy.x < player.x + player.width &&
+        enemy.x + 30 > player.x &&
+        enemy.y < player.y + player.height &&
+        enemy.y + 30 > player.y
+      ) {
+        endGame();
+      }
+    });
+
+    // Укорачивание врагов при попадании пуль
+    bullets.forEach(bullet => {
+      enemies = enemies.filter(enemy => {
+        if (
+          bullet.x < enemy.x + 30 &&
+          bullet.x + 5 > enemy.x &&
+          bullet.y < enemy.y + 30 &&
+          bullet.y + 10 > enemy.y
+        ) {
+          return false; // Враг уничтожен
+        }
+        return true;
+      });
+    });
+
+    // Появление новых врагов
+    if (Math.random() < 0.02) {
+      enemies.push({ x: Math.random() * (canvas.width - 30), y: 0 });
+    }
+
+    // Запуск следующего кадра
+    if (gameRunning) {
+      requestAnimationFrame(gameLoop);
+    }
+  }
+
+  // Запуск игры
+  function startGame() {
+    countdown = 5;
+    gameRunning = false;
+    document.getElementById('menu').style.display = 'none';
+    
+    // Инициализация начальных врагов
+    enemies = [
+      { x: Math.random() * (canvas.width - 30), y: 0 },
+      { x: Math.random() * (canvas.width - 30), y: 0 },
+      { x: Math.random() * (canvas.width - 30), y: 0 }
+    ];
+
+    gameLoop();
+  }
+
+  // Конец игры
+function endGame() {
+  gameRunning = false;
+  document.getElementById('menu').style.display = 'block';
+  document.getElementById('menu').innerHTML = '<h2>Игра окончена</h2><button onclick="startGame()">Попробовать еще раз</button>';
+}
+</script>
+
+</body>
+</html>
